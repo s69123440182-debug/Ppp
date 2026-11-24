@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>for prin</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ffd6e0;--pink2:#ffb3c6;--cream:#fff6e5;--red:#d62839;--beige:#f1dfc6;--ink:#5a2a35;--bg:#ffd6e0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#f6b9cb}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:'Mali','Sarabun','Noto Sans Thai',sans-serif}
+body{background:linear-gradient(180deg,#ffe3ea,var(--pink) 60%,var(--pink2))}
+.px{font-family:'Press Start 2P',monospace,sans-serif}
+.stage{position:absolute;z-index:1;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 18px 20px;text-align:center;opacity:0;visibility:hidden;transform:translateY(14px) scale(.98);transition:opacity .8s ease,transform .8s ease,visibility .8s;overflow-y:auto}
+.stage.on{opacity:1;visibility:visible;transform:none}
+h1,h2{margin:0 0 14px;font-weight:600}
+.lead{font-size:1.1rem;line-height:1.7;max-width:320px;margin:0 0 18px}
+.tag{font-size:.6rem;line-height:1.8;letter-spacing:1px;margin-top:18px;color:var(--red)}
+.btn{font-family:'Press Start 2P',monospace,sans-serif;font-size:.7rem;line-height:1.5;color:#fff;background:var(--red);border:0;padding:14px 18px;border-radius:10px;box-shadow:0 5px 0 #8f1b27;cursor:pointer;margin-top:16px;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #8f1b27}
+.btn.soft{background:#fff;color:var(--red);box-shadow:0 5px 0 var(--pink2)}
+.btn[hidden]{display:none}
+/* hearts */
+#sky{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.fh{position:absolute;bottom:-30px;animation:rise linear forwards;will-change:transform,opacity}
+@keyframes rise{to{transform:translate(var(--dx),-115vh) rotate(var(--r));opacity:0}}
+.burst{position:absolute;animation:bur .95s ease-out forwards}
+@keyframes bur{to{transform:translate(var(--bx),var(--by)) scale(.4);opacity:0}}
+.sp{position:absolute;width:8px;height:8px;background:#fff;box-shadow:0 0 8px #fff;animation:spk .8s ease-out forwards}
+@keyframes spk{to{transform:translate(var(--bx),var(--by)) scale(0);opacity:0}}
+/* envelope */
+.env{position:relative;width:240px;height:160px;background:var(--pink2);border-radius:6px;box-shadow:0 12px 24px rgba(120,40,60,.25);perspective:700px;transform-style:preserve-3d;margin:10px 0 6px;will-change:transform}
+.env .paper{position:absolute;left:12px;right:12px;bottom:8px;height:130px;background:var(--cream);border-radius:4px;transform:translateZ(6px);transition:transform 1.2s ease .5s;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--red)}
+.env .front{position:absolute;inset:0;border-radius:6px;background:linear-gradient(135deg,transparent 49%,#ff9bb5 50%) left/50% 100% no-repeat,linear-gradient(225deg,transparent 49%,#ff9bb5 50%) right/50% 100% no-repeat;transform:translateZ(12px);z-index:2}
+.env .flap{position:absolute;left:0;right:0;top:0;height:90px;background:#ff8fab;clip-path:polygon(0 0,100% 0,50% 100%);transform:translateZ(14px);transform-origin:top;transition:transform .8s ease;z-index:3;backface-visibility:hidden}
+.env.open .flap{transform:translateZ(3px) rotateX(180deg);z-index:1}
+.env.open .paper{transform:translateY(-95px) translateZ(6px)}
+.seal{position:absolute;left:50%;top:70px;width:54px;height:54px;margin:0 0 0 -27px;border:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff5a6b,var(--red) 60%,#8f1b27);z-index:4;box-shadow:0 4px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;transform:translateZ(20px);transition:transform .5s,opacity .5s}
+.seal.gone{transform:translateZ(20px) scale(1.8);opacity:0}
+.shake{animation:shk .45s}
+@keyframes shk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+/* pixel hearts stage */
+#field{position:relative;width:100%;max-width:340px;height:300px}
+.ph{position:absolute;width:56px;height:50px;border:0;background:none;padding:0;cursor:pointer;animation:bob 2.4s ease-in-out infinite;transition:transform .3s,opacity .3s}
+.ph.got{transform:scale(1.8);opacity:0;pointer-events:none}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.count{font-size:1.05rem;font-weight:600;color:var(--red);margin-top:8px}
+#cnt::before{content:"แตะหัวใจให้ครบ "}
+/* password */
+input{font-family:'Press Start 2P',monospace,sans-serif;font-size:.8rem;text-align:center;padding:13px;border:3px solid var(--red);border-radius:10px;background:var(--cream);color:var(--ink);width:210px;outline:none;letter-spacing:3px}
+.msg{min-height:28px;margin-top:12px;color:var(--red);font-weight:600}
+/* letter */
+.paperx{position:relative;width:100%;max-width:360px;max-height:100%;background:var(--cream);border:2px solid var(--beige);border-radius:6px;padding:26px 22px 22px;text-align:left;box-shadow:0 12px 26px rgba(120,40,60,.25),inset 0 0 0 7px var(--cream),inset 0 0 0 8px var(--beige);overflow-y:auto}
+.paperx h2{font-family:'Press Start 2P',monospace,sans-serif;font-size:.78rem;line-height:1.7;text-align:center;color:var(--red);margin-bottom:16px}
+#typed{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font-size:1.05rem;line-height:1.9;min-height:200px}
+#typed.cur::after{content:"|";animation:blink .7s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+#final{margin-top:12px;text-align:center;font-weight:600;color:var(--red);opacity:0;transition:opacity 1.5s}
+#final.show{opacity:1}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+/* last */
+#intro{position:fixed;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;perspective:900px;transition:opacity .9s ease;cursor:pointer}
+#intro.out{opacity:0;pointer-events:none}
+.ispin{position:relative;width:200px;height:134px;transform-style:preserve-3d;animation:iSpin 3.2s cubic-bezier(.22,.7,.2,1) forwards}
+.ispin>div{position:absolute;inset:0;border-radius:6px;backface-visibility:hidden}
+.if{background:var(--pink2);transform:translateZ(5px);overflow:hidden}
+.if::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 49%,#ff9bb5 50%) left/50% 100% no-repeat,linear-gradient(225deg,transparent 49%,#ff9bb5 50%) right/50% 100% no-repeat}
+.if::after{content:"";position:absolute;left:0;right:0;top:0;height:78px;background:#ff8fab;clip-path:polygon(0 0,100% 0,50% 100%)}
+.ib{background:#ff9bb5;transform:rotateY(180deg) translateZ(5px)}
+.im{background:var(--cream);backface-visibility:visible!important}
+.iseal{position:absolute;left:50%;top:52px;width:40px;height:40px;margin-left:-20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff5a6b,var(--red) 60%,#8f1b27);display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 3px 6px rgba(0,0,0,.3)}
+@keyframes iSpin{0%{transform:rotateX(-12deg) rotateY(0) scale(.15)}75%{transform:rotateX(-8deg) rotateY(660deg) scale(1.05)}100%{transform:rotateX(0) rotateY(720deg) scale(1)}}
+#stkrow{display:flex;justify-content:center;align-items:flex-end;gap:22px;min-height:78px;margin-top:10px}
+.stk{border:0;background:none;padding:0;cursor:pointer;opacity:0;transform:scale(.2) rotate(-20deg);pointer-events:none;transition:opacity .4s,transform .5s cubic-bezier(.3,1.8,.5,1);line-height:0}
+.stk.show{opacity:1;transform:none;pointer-events:auto}
+.stk svg{filter:drop-shadow(0 3px 0 rgba(90,42,53,.2))}
+.stk.hop{animation:hop .6s}
+@keyframes hop{30%{transform:translateY(-22px) scale(1.15) rotate(-8deg)}60%{transform:translateY(0) scale(.95)}80%{transform:translateY(-6px) rotate(6deg)}}
+#ititle{font-family:'Press Start 2P',monospace,sans-serif;font-size:.85rem;letter-spacing:2px;color:var(--red);margin-top:44px;min-height:1.6em;text-align:center;text-shadow:2px 2px 0 #fff}
+body.last{background:linear-gradient(180deg,#ffc2d4,#ffe6ec 80%)}
+#gl{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+#s5 p{font-size:1.15rem;line-height:1.7;max-width:310px;margin:0 0 14px;opacity:0;transform:translateY(10px);transition:all 1.2s}
+#s5 p.show{opacity:1;transform:none}
+#s5 .big{font-family:'Press Start 2P',monospace,sans-serif;font-size:1.05rem;line-height:1.8;color:var(--red)}
+/* music */
+#music{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;z-index:20;display:flex;align-items:center;gap:6px;background:rgba(255,246,229,.9);border-radius:20px;padding:5px 8px;font-size:.55rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+#music button{border:0;background:var(--red);color:#fff;border-radius:50%;width:30px;height:30px;font-size:.85rem;cursor:pointer}
+#ytbox{position:fixed;left:-300px;top:0;width:200px;height:200px;opacity:0;pointer-events:none}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<div id="music"><span id="mstat" class="px">MUSIC OFF</span><button id="mplay" aria-label="Play or pause">▶</button><button id="mmute" aria-label="Mute or unmute">🔊</button></div>
+<div id="ytbox"><div id="yt"></div></div>
+<canvas id="gl"></canvas>
+<div id="sky"></div>
+
+<div id="intro"><div class="ispin"><div class="im"></div><div class="if"><span class="iseal" id="iseal"></span></div><div class="ib"></div></div><div id="ititle"></div></div>
+
+<!-- STAGE 1 -->
+<section class="stage" id="s1">
+  <p class="lead">มีจดหมายฉบับหนึ่งที่ผมอยากให้คุณได้อ่าน…</p>
+  <div class="env" id="env1"><div class="paper">💌</div><div class="front"></div><div class="flap"></div></div>
+  <div class="tag px">A LITTLE LETTER FOR SOMEONE SPECIAL</div>
+  <button class="btn" id="open1">OPEN MY LETTER</button>
+</section>
+
+<!-- STAGE 2 -->
+<section class="stage" id="s2">
+  <p class="lead">ก่อนจะไปอ่านจดหมาย ผมมีอะไรเล็ก ๆ น้อย ๆ ให้คุณ</p>
+  <div id="field"></div>
+  <div class="count" id="cnt">0 / 5</div>
+  <p class="lead" id="win" style="display:none;margin-top:12px">คุณเก่งมาก! ถึงเวลาเปิดจดหมายแล้วนะ</p>
+  <button class="btn" id="cont2" hidden>CONTINUE</button>
+</section>
+
+<!-- STAGE 3 -->
+<section class="stage" id="s3">
+  <p class="lead">จดหมายฉบับนี้มีไว้สำหรับคุณคนเดียว</p>
+  <div class="env" id="env3"><div class="paper">💌</div><div class="front"></div><div class="flap"></div><button class="seal" id="seal" aria-label="seal"><svg width="26" height="24" viewBox="0 0 9 8" shape-rendering="crispEdges"><path fill="#ffd6e0" d="M1 0h2v1h1v1H3V1H1zM5 1h1V0h2v1h1v3H8v1H7v1H6v1H5V6H4V5H3V4H2V3H1V1h1v1h1v1h1v1h1V3h1V2H5z" opacity="0"/><path fill="#ffd6e0" d="M1 0h2v1h1v1h1V1h1V0h2v1h1v3H8v1H7v1H6v1H5v1H4V7H3V6H2V5H1V4H0V1h1z"/></svg></button></div>
+  <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="PASSWORD" aria-label="Password">
+  <div class="msg" id="pmsg"></div>
+  <button class="btn" id="unlock">UNLOCK</button>
+</section>
+
+<!-- STAGE 4 -->
+<section class="stage" id="s4">
+  <div class="paperx">
+    <h2>GOOD MORNING, MY LOVE ☀️</h2>
+    <div id="typed"></div>
+    <div id="stkrow"><button class="stk" id="stk0" aria-label="ข้าวมันไก่ทอด"></button><button class="stk" id="stk1" aria-label="นศท."></button></div>
+    <div id="final">ขอให้วันนี้เป็นวันที่ดีของคุณนะ ❤️</div>
+  </div>
+  <div class="row">
+    <button class="btn soft" id="again" hidden>READ AGAIN</button>
+    <button class="btn" id="next4" hidden>NEXT PAGE</button>
+  </div>
+</section>
+
+<!-- STAGE 5 -->
+<section class="stage" id="s5">
+  <p id="l1">ขอบคุณนะที่เข้ามาเป็นส่วนหนึ่งในเรื่องราวของผม</p>
+  <p id="l2">หวังว่าเราจะได้เขียนเรื่องราวดี ๆ ไปด้วยกันอีกนานเลย</p>
+  <p class="big" id="l3">YOU ARE MY FAVORITE PERSON ❤️</p>
+  <button class="btn soft" id="restart" hidden>READ AGAIN</button>
+</section>
+
+<script>
+/* ===== SETTINGS: แก้ตรงนี้ได้เลย ===== */
+const CONFIG = {
+  password: "21112569",
+  youtubeId: "kIvF81BRuPI",   // https://youtu.be/kIvF81BRuPI
+  letterText: "มอนิ่งนะคุณ วันนี้คุณกินข้าวรึยังข้าวมันไก่ทอดมั้ยนร้า หรือว่า ไปสายละเนี่ยยังไงก็ตั้งใจเรียนนะ แล้วใส่ชุดนศทนานมั้ยวันนี้ก็สู้สู้ตั้งใจเรียนรับใช้ชาติ ขอให้คุณมีความสุขยิ้มเยอะๆนะะ\n\n",
+  signoff: "เลิ้ปยู",
+  typeSpeed: 55
+};
+/* ==================================== */
+const $=id=>document.getElementById(id), sky=$('sky');
+const HEART='<svg width="{s}" height="{s}" viewBox="0 0 9 8" shape-rendering="crispEdges"><path fill="{c}" d="M1 0h2v1h1v1h1V1h1V0h2v1h1v3H8v1H7v1H6v1H5v1H4V7H3V6H2V5H1V4H0V1h1z"/><path fill="#fff" opacity=".7" d="M1 1h1v1H1z"/></svg>';
+const heart=(s,c)=>HEART.replace(/\{s\}/g,s).replace('{c}',c||'#ff5a7a');
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const cols=['#ff5a7a','#d62839','#ff8fab','#ffb3c6'];
+
+/* floating hearts (capped for smooth phones) */
+function floatHeart(size,dur){
+  if(sky.childElementCount>40)return;
+  const e=document.createElement('div');e.className='fh';
+  const s=size||(14+Math.random()*18);
+  e.innerHTML=heart(s,pick(cols));
+  e.style.left=Math.random()*96+'%';
+  e.style.setProperty('--dx',(Math.random()*80-40)+'px');
+  e.style.setProperty('--r',(Math.random()*50-25)+'deg');
+  e.style.animationDuration=(dur||(5+Math.random()*4))+'s';
+  sky.appendChild(e);setTimeout(()=>e.remove(),(dur||9)*1000+500);
+}
+let ambient=null;
+function setAmbient(ms,dur){clearInterval(ambient);if(ms)ambient=setInterval(()=>floatHeart(0,dur),ms)}
+function burst(x,y,n){
+  n=n||22;if(T3.ok)T3.burst(x,y,Math.round(n*.9));
+  for(let i=0;i<n;i++){
+    const e=document.createElement('div');
+    const a=Math.random()*6.283,d=50+Math.random()*130;
+    const heartMode=i%3!==0;
+    e.className=heartMode?'burst':'sp';
+    if(heartMode)e.innerHTML=heart(12+Math.random()*14,pick(cols));
+    e.style.left=x+'px';e.style.top=y+'px';
+    e.style.setProperty('--bx',Math.cos(a)*d+'px');e.style.setProperty('--by',Math.sin(a)*d+'px');
+    sky.appendChild(e);setTimeout(()=>e.remove(),1100);
+  }
+}
+const center=()=>[innerWidth/2,innerHeight/2];
+
+/* sound blip */
+let ac;
+function blip(f){
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+  const o=ac.createOscillator(),g=ac.createGain();o.type='square';o.frequency.value=f;
+  g.gain.setValueAtTime(.08,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.25);
+  o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.26)}catch(e){}
+}
+
+/* ===== MUSIC (YouTube embed, never autoplays) ===== */
+let player=null,ready=false,wantPlay=false,playing=false,muted=false;
+function ui(){
+  $('mplay').textContent=playing?'⏸':'▶';
+  $('mmute').textContent=muted?'🔇':'🔊';
+  $('mstat').textContent=!ready&&wantPlay?'LOADING…':playing?(muted?'MUTED':'PLAYING'):'MUSIC OFF';
+}
+function loadYT(){
+  const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';t.onerror=()=>{};
+  document.head.appendChild(t);
+}
+window.onYouTubeIframeAPIReady=function(){
+  try{
+    player=new YT.Player('yt',{width:200,height:200,videoId:CONFIG.youtubeId,
+      playerVars:{playsinline:1,controls:0,rel:0,loop:1,playlist:CONFIG.youtubeId,origin:location.origin},
+      events:{onReady:()=>{ready=true;if(wantPlay)player.playVideo();ui()},
+        onStateChange:e=>{playing=e.data===1||e.data===3;ui()},
+        onError:()=>{wantPlay=false;playing=false;ui()}}});
+  }catch(e){}
+};
+function musicPlay(){wantPlay=true;if(ready){try{player.playVideo();if(muted)player.mute()}catch(e){}}ui()}
+function musicPause(){wantPlay=false;if(ready){try{player.pauseVideo()}catch(e){}}playing=false;ui()}
+$('mplay').onclick=()=>{playing||wantPlay?musicPause():musicPlay()};
+$('mmute').onclick=()=>{muted=!muted;if(ready){try{muted?player.mute():player.unMute()}catch(e){}}ui()};
+loadYT();ui();
+
+/* ===== 3D LAYER (three.js) : ถ้า WebGL ใช้ไม่ได้ จะกลับไปใช้แบบ 2D อัตโนมัติ ===== */
+const T3={ok:false,sensor(){},burst(){},hero(){},collect(){}};
+(function(){
+try{
+ if(typeof THREE==='undefined')return;
+ const R=new THREE.WebGLRenderer({canvas:$('gl'),alpha:true,antialias:true,powerPreference:'low-power'});
+ R.setPixelRatio(Math.min(devicePixelRatio||1,2));
+ const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(50,1,.1,100);cam.position.z=10;
+ sc.add(new THREE.AmbientLight(0xffffff,.8));
+ const dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(3,5,8);sc.add(dl);
+ const pl=new THREE.PointLight(0xffb3c6,.7,40);pl.position.set(-4,-2,6);sc.add(pl);
+ const sh=new THREE.Shape();sh.moveTo(0,-1);
+ sh.bezierCurveTo(-.6,-.5,-1.2,.1,-1.1,.6);sh.bezierCurveTo(-1,1.15,-.25,1.3,0,.65);
+ sh.bezierCurveTo(.25,1.3,1,1.15,1.1,.6);sh.bezierCurveTo(1.2,.1,.6,-.5,0,-1);
+ const geo=new THREE.ExtrudeGeometry(sh,{depth:.45,bevelEnabled:true,bevelThickness:.18,bevelSize:.15,bevelSegments:4,curveSegments:14});geo.center();
+ const mats=[0xff5a7a,0xd62839,0xff8fab,0xffb3c6].map(c=>new THREE.MeshPhongMaterial({color:c,shininess:90,specular:0xffffff}));
+ const toW=(px,py)=>{const v=new THREE.Vector3(px/innerWidth*2-1,-(py/innerHeight)*2+1,.5).unproject(cam);const d=v.sub(cam.position).normalize();return cam.position.clone().add(d.multiplyScalar(-cam.position.z/d.z))};
+ /* background: layered hearts + stars (parallax) */
+ const bg=[];
+ for(let i=0;i<14;i++){const m=new THREE.Mesh(geo,mats[i%4]);const s=.14+Math.random()*.3;m.scale.setScalar(s);
+  m.userData={bx:(Math.random()-.5)*14,by:(Math.random()-.5)*16,z:-8+Math.random()*10,ph:Math.random()*6,sp:.3+Math.random()*.7};
+  m.position.set(m.userData.bx,m.userData.by,m.userData.z);sc.add(m);bg.push(m)}
+ const sp=new Float32Array(150);for(let i=0;i<150;i+=3){sp[i]=(Math.random()-.5)*20;sp[i+1]=(Math.random()-.5)*22;sp[i+2]=-6+Math.random()*8}
+ const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
+ const stars=new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:.09,transparent:true,opacity:.9}));sc.add(stars);
+ /* tilt: pointer + phone gyro */
+ const tl={x:0,y:0};let sx=0,sy=0;
+ addEventListener('pointermove',e=>{tl.x=(e.clientX/innerWidth-.5)*2;tl.y=(e.clientY/innerHeight-.5)*2});
+ const dev=e=>{if(e.gamma==null)return;tl.x=Math.max(-1,Math.min(1,e.gamma/30));tl.y=Math.max(-1,Math.min(1,((e.beta||45)-45)/30))};
+ T3.sensor=()=>{try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){DeviceOrientationEvent.requestPermission().then(r=>{if(r==='granted')addEventListener('deviceorientation',dev)}).catch(()=>{})}else addEventListener('deviceorientation',dev)}catch(e){}};
+ /* burst particles */
+ const ps=[];
+ T3.burst=(x,y,n)=>{const c=toW(x,y);for(let i=0;i<n&&ps.length<70;i++){const m=new THREE.Mesh(geo,mats[i%4]);m.position.copy(c);const s=.1+Math.random()*.16;m.scale.setScalar(s);
+  m.userData={v:new THREE.Vector3((Math.random()-.5)*7,(Math.random()-.2)*7,Math.random()*5),rv:new THREE.Vector3(Math.random()*6,Math.random()*6,Math.random()*3),s,life:0,max:1.2+Math.random()*.6};sc.add(m);ps.push(m)}};
+ /* collectible 3D hearts (stage 2) */
+ let cols=[],onHit=null;
+ T3.collect=(pts,cb)=>{cols.forEach(m=>sc.remove(m));cols=[];onHit=cb;const s=72/innerHeight*9.33/2.4;
+  pts.forEach((p,i)=>{const mt=mats[i%4].clone();mt.transparent=true;const m=new THREE.Mesh(geo,mt);m.userData={sx:p[0],sy:p[1],base:toW(p[0],p[1]),s,i,fly:0,done:false};m.position.copy(m.userData.base);m.scale.setScalar(s);sc.add(m);cols.push(m)})};
+ $('field').addEventListener('pointerdown',e=>{cols.forEach(m=>{const u=m.userData;if(!u.done&&Math.hypot(e.clientX-u.sx,e.clientY-u.sy)<48){u.done=true;onHit&&onHit(u.sx,u.sy)}})});
+ /* hero heart (last page) */
+ const hero=new THREE.Mesh(geo,mats[1]);hero.visible=false;sc.add(hero);let heroOn=false,hs=0;
+ T3.hero=on=>{heroOn=on;if(on)hero.visible=true};
+ const rs=()=>{R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()};
+ addEventListener('resize',rs);rs();
+ let last=performance.now();
+ (function loop(now){
+  requestAnimationFrame(loop);
+  const dt=Math.min((now-last)/1000,.05)||.016,t=now/1000;last=now;
+  sx+=(tl.x-sx)*.06;sy+=(tl.y-sy)*.06;
+  bg.forEach(m=>{const u=m.userData,k=(u.z+9)*.28;m.position.x=u.bx+sx*k;m.position.y=u.by+Math.sin(t*u.sp+u.ph)*.5-sy*k*.6;m.rotation.y+=dt*u.sp;m.rotation.x=Math.sin(t*.5+u.ph)*.3});
+  stars.rotation.z+=dt*.01;stars.position.x=sx*.8;stars.position.y=-sy*.5;
+  for(let i=ps.length-1;i>=0;i--){const m=ps[i],u=m.userData;u.life+=dt;u.v.y-=5*dt;m.position.addScaledVector(u.v,dt);m.rotation.x+=u.rv.x*dt;m.rotation.y+=u.rv.y*dt;m.scale.setScalar(Math.max(.001,u.s*(1-u.life/u.max)));if(u.life>u.max){sc.remove(m);ps.splice(i,1)}}
+  cols.forEach(m=>{const u=m.userData;if(!u.done){m.position.y=u.base.y+Math.sin(t*2+u.i)*.2;m.rotation.y=Math.sin(t+u.i)*.7;m.rotation.z=Math.sin(t*1.3+u.i)*.15}
+   else if(m.visible){u.fly+=dt;m.scale.setScalar(u.s*(1+u.fly*4));m.rotation.y+=dt*14;m.material.opacity=Math.max(0,1-u.fly*2.2);if(m.material.opacity<=0)m.visible=false}});
+  hs+=((heroOn?1:0)-hs)*Math.min(1,dt*3);if(!heroOn&&hs<.01)hero.visible=false;
+  if(hero.visible){hero.position.copy(toW(innerWidth/2,innerHeight*.17));hero.scale.setScalar(90/innerHeight*9.33/2.4*hs*(1+.12*Math.pow(Math.max(0,Math.sin(t*3.2)),3)));hero.rotation.y=Math.sin(t*.9)*.7}
+  R.render(sc,cam);
+ })(last);
+ T3.ok=true;
+}catch(e){T3.ok=false}
+})();
+
+/* 3D tilt: ลากซองจดหมายด้วยนิ้ว/เมาส์เพื่อหมุนดูได้ */
+document.querySelectorAll('.env').forEach(el=>{
+ let rx=0,ry=0,tx=0,ty=0,drag=false,lx=0,ly=0;const t0=Math.random()*6;
+ el.style.touchAction='none';
+ el.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;try{el.setPointerCapture(e.pointerId)}catch(_){}});
+ el.addEventListener('pointermove',e=>{if(!drag)return;ty=Math.max(-60,Math.min(60,ty+(e.clientX-lx)*.7));tx=Math.max(-40,Math.min(40,tx-(e.clientY-ly)*.7));lx=e.clientX;ly=e.clientY});
+ ['pointerup','pointercancel'].forEach(n=>el.addEventListener(n,()=>{drag=false}));
+ (function f(t){if(!drag){tx*=.96;ty*=.96}
+  rx+=(tx+Math.sin(t/1200+t0)*6-rx)*.15;ry+=(ty+Math.cos(t/1500+t0)*9-ry)*.15;
+  el.style.transform='perspective(800px) rotateX('+rx.toFixed(2)+'deg) rotateY('+ry.toFixed(2)+'deg)';requestAnimationFrame(f)})(0);
+});
+
+/* ===== STAGES ===== */
+let cur=1;
+function go(n){
+  document.querySelector('.stage.on').classList.remove('on');
+  $('s'+n).classList.add('on');cur=n;
+  document.body.classList.toggle('last',n===5);T3.hero(n===5);
+  if(n===2)initHearts();
+  if(n===4)startLetter();
+  if(n===5)lastPage();
+  else if(n!==4)setAmbient(1400);
+}
+setAmbient(1400);
+
+/* Stage 1 */
+$('open1').onclick=()=>{
+  $('open1').disabled=true;musicPlay();T3.sensor();
+  $('env1').classList.add('open');
+  for(let i=0;i<8;i++)setTimeout(()=>floatHeart(20+Math.random()*14,4),i*150);
+  setTimeout(()=>go(2),2100);
+};
+
+/* Stage 2: collect 5 pixel hearts */
+let got=0;
+function initHearts(){
+  got=0;$('cnt').textContent='0 / 5';$('win').style.display='none';$('cont2').hidden=true;
+  const f=$('field');f.innerHTML='';
+  if(T3.ok){
+    const r=f.getBoundingClientRect();
+    const pos=[[.08,12],[.62,4],[.34,105],[.10,200],[.66,190]];
+    T3.collect(pos.map(p=>[r.left+p[0]*r.width+28,r.top+p[1]+25]),(hx,hy)=>{
+      got++;blip(520+got*120);burst(hx,hy,12);$('cnt').textContent=got+' / 5';
+      if(got===5)setTimeout(()=>{$('win').style.display='block';$('cont2').hidden=false;blip(990)},500)});
+    return;
+  }
+  const pos=[[8,12],[62,4],[34,105],[10,200],[66,190]];
+  pos.forEach((p,i)=>{
+    const b=document.createElement('button');b.className='ph';b.setAttribute('aria-label','heart');
+    b.innerHTML=heart(56,'#ff5a7a');b.style.left=p[0]+'%';b.style.top=p[1]+'px';b.style.animationDelay=(i*.35)+'s';
+    b.onclick=e=>{
+      if(b.classList.contains('got'))return;
+      b.classList.add('got');got++;blip(520+got*120);
+      const r=b.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,12);
+      $('cnt').textContent=got+' / 5';
+      if(got===5){setTimeout(()=>{$('win').style.display='block';$('cont2').hidden=false;blip(990)},500)}
+    };
+    f.appendChild(b);
+  });
+}
+$('cont2').onclick=()=>go(3);
+
+/* Stage 3: unlock */
+function tryUnlock(){
+  const v=$('pw').value.trim();
+  if(v===CONFIG.password){
+    $('pmsg').textContent='';$('unlock').disabled=true;$('pw').blur();
+    const r=$('seal').getBoundingClientRect();
+    $('seal').classList.add('gone');burst(r.left+r.width/2,r.top+r.height/2,26);blip(880);
+    setTimeout(()=>$('env3').classList.add('open'),500);
+    setTimeout(()=>go(4),2200);
+  }else{
+    $('pmsg').textContent='ลองอีกครั้งนะคนเก่ง 💕';
+    const e=$('env3');e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake');
+  }
+}
+$('unlock').onclick=tryUnlock;
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock()});
+
+/* Stage 4: typewriter letter */
+let typeTimer=null,runId=0;
+function startLetter(){
+  const id=++runId,el=$('typed');
+  el.textContent='';el.classList.add('cur');document.querySelectorAll('.stk').forEach(b=>b.classList.remove('show'));
+  $('final').classList.remove('show');$('again').hidden=true;$('next4').hidden=true;
+  setAmbient(0);clearTimeout(typeTimer);
+  const chars=Array.from(CONFIG.letterText),sign=Array.from(CONFIG.signoff);
+  let i=0,j=0;
+  (function tick(){
+    if(id!==runId)return;
+    if(i<chars.length){el.textContent+=chars[i++];const tx=el.textContent;if(tx.endsWith('ข้าวมันไก่ทอด'))popStk(0);if(tx.endsWith('นศท'))popStk(1);typeTimer=setTimeout(tick,CONFIG.typeSpeed);return}
+    if(j<sign.length){
+      el.textContent+=sign[j++];
+      if(j===1){for(let k=0;k<6;k++)setTimeout(()=>floatHeart(12+Math.random()*8,4),k*220)}
+      typeTimer=setTimeout(tick,CONFIG.typeSpeed+60);return;
+    }
+    el.classList.remove('cur');
+    setTimeout(()=>{
+      if(id!==runId)return;
+      $('final').classList.add('show');setAmbient(1100,11);
+      $('again').hidden=false;$('next4').hidden=false;
+    },900);
+  })();
+}
+$('again').onclick=startLetter;
+$('next4').onclick=()=>go(5);
+
+/* Stage 5 */
+function lastPage(){
+  runId++;['l1','l2','l3'].forEach(i=>$(i).classList.remove('show'));$('restart').hidden=true;
+  setAmbient(450,7);
+  const [x,y]=center();burst(x,y,34);setTimeout(()=>burst(x,y,24),350);
+  setTimeout(()=>$('l1').classList.add('show'),700);
+  setTimeout(()=>$('l2').classList.add('show'),2400);
+  setTimeout(()=>{$('l3').classList.add('show');const [a,b]=center();burst(a,b,30);$('restart').hidden=false},4300);
+}
+$('restart').onclick=()=>{go(4)};
+
+/* ===== INTRO: ซองจดหมายหมุนก่อนเข้าเว็บ (แตะเพื่อข้ามได้) ===== */
+(function(){
+ const it=$('intro'),tt=$('ititle'),word=Array.from('for prin');let done=false,i=0;
+ $('iseal').innerHTML=heart(20,'#ffd6e0');
+ function end(){if(done)return;done=true;it.classList.add('out');$('s1').classList.add('on');setTimeout(()=>it.remove(),1000)}
+ it.addEventListener('pointerdown',end);
+ setTimeout(function ty(){if(done)return;if(i<word.length){tt.textContent+=word[i++];setTimeout(ty,90)}},1300);
+ setTimeout(()=>{if(done)return;burst(innerWidth/2,innerHeight/2-30,24);for(let k=0;k<6;k++)setTimeout(()=>floatHeart(16+Math.random()*12,5),k*120)},3100);
+ setTimeout(end,4300);
+})();
+
+/* ===== STICKERS: ข้าวมันไก่ทอด + นศท. (โผล่ตอนพิมพ์ถึงคำนั้น แตะแล้วเด้ง+มีเสียง) ===== */
+const SPR={
+ rice:{p:{K:'#5a2a35',R:'#fffaf0',G:'#e8a33d',B:'#b9702a',C:'#7bc47f',D:'#3f8f4a',S:'#d62839',P:'#f1dfc6'},r:[
+  '..............','..KKKK........','.KRRRRK..KKK..','KRRRRRRKKGGGK.','KRRRRRRKGGBGGK','KRRRRRRKGBGGGK','.KRRRRKKKGGBK.','KKKKKKKKKKKKKK','KPPCCDPPSSPPPK','.KPPPPPPPPPPK.','..KKKKKKKKKK..']},
+ cadet:{p:{K:'#3b2a2a',H:'#4a6b3a',Y:'#f5c542',F:'#ffd8b8',U:'#556b2f',L:'#7a9a55',T:'#b89b5e'},r:[
+  '....KKKK....','...KHHHHK...','..KHHYHHHK..','..KKKKKKKK..','..KFFFFFFK..','..KFKFFKFK..','..KFFFFFFK..','...KFFFFK...','..KUUUUUUK..','.KUULUUTUUK.','.KUUUUUUUUK.','.KUUUUUUUUK.','..KKKKKKKK..']}
+};
+function sprite(o,px){const h=o.r.length,w=o.r[0].length;let s='<svg width="'+w*px+'" height="'+h*px+'" viewBox="0 0 '+w+' '+h+'" shape-rendering="crispEdges">';
+ o.r.forEach((row,y)=>{for(let x=0;x<w;x++){const c=row[x];if(c!=='.')s+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+o.p[c]+'"/>'}});return s+'</svg>'}
+$('stk0').innerHTML=sprite(SPR.rice,5);$('stk1').innerHTML=sprite(SPR.cadet,5);
+const TUNES=[[660,880,1100],[523,659,784,1046]];
+function tune(a){a.forEach((f,k)=>setTimeout(()=>blip(f),k*110))}
+function popStk(i){$('stk'+i).classList.add('show');blip(i?784:988)}
+[0,1].forEach(i=>{$('stk'+i).onclick=()=>{const b=$('stk'+i);b.classList.remove('hop');void b.offsetWidth;b.classList.add('hop');tune(TUNES[i]);const r=b.getBoundingClientRect();burst(r.left+r.width/2,r.top+10,8)}});
+</script>
+</body>
+</html>
